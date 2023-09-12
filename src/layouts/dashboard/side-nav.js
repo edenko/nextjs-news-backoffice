@@ -1,8 +1,10 @@
+import React from 'react';
 import NextLink from 'next/link';
 import { usePathname } from 'next/navigation';
 import PropTypes from 'prop-types';
 import ArrowTopRightOnSquareIcon from '@heroicons/react/24/solid/ArrowTopRightOnSquareIcon';
 import ChevronUpDownIcon from '@heroicons/react/24/solid/ChevronUpDownIcon';
+import LockClosedIcon from '@heroicons/react/24/solid/LockClosedIcon';
 import {
   Box,
   Button,
@@ -22,6 +24,24 @@ export const SideNav = (props) => {
   const { open, onClose } = props;
   const pathname = usePathname();
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
+  const renderNavItem = (item, depth = 0) => {
+    const active = item.path ? (pathname === item.path) : false;
+    return (
+      <React.Fragment key={item.title}>
+        <SideNavItem
+          active={active}
+          disabled={item.disabled}
+          external={item.external}
+          icon={item.icon}
+          path={item.path}
+          title={item.title}
+          depth={depth}
+        >
+          {item.children && item.children.map((child) => renderNavItem(child, depth + 1))}
+        </SideNavItem>
+      </React.Fragment>
+    );
+  };
 
   const content = (
     <Scrollbar
@@ -71,7 +91,7 @@ export const SideNav = (props) => {
                 color="inherit"
                 variant="subtitle1"
               >
-                Devias
+                NEWS BACKOFFICE
               </Typography>
               <Typography
                 color="neutral.400"
@@ -84,12 +104,18 @@ export const SideNav = (props) => {
               fontSize="small"
               sx={{ color: 'neutral.500' }}
             >
-              <ChevronUpDownIcon />
+              <LockClosedIcon />
+              {/* <ChevronUpDownIcon /> */}
             </SvgIcon>
           </Box>
         </Box>
         <Divider sx={{ borderColor: 'neutral.700' }} />
-        <Box
+        <Box component="nav" sx={{ flexGrow: 1, px: 2, py: 3 }}>
+          <Stack component="ul" spacing={0.5} sx={{ listStyle: 'none', p: 0, m: 0 }}>
+            {items.map((item) => renderNavItem(item))}
+          </Stack>
+        </Box>
+        {/* <Box
           component="nav"
           sx={{
             flexGrow: 1,
@@ -122,9 +148,22 @@ export const SideNav = (props) => {
               );
             })}
           </Stack>
-        </Box>
+        </Box> */}
         <Divider sx={{ borderColor: 'neutral.700' }} />
-        <Box
+        {/* <Box
+          sx={{
+            px: 2,
+            py: 3
+          }}
+        >
+          <Typography
+            color="neutral.100"
+            variant="subtitle2"
+          >
+           
+          </Typography>
+        </Box> */}
+        {/* <Box
           sx={{
             px: 2,
             py: 3
@@ -173,7 +212,7 @@ export const SideNav = (props) => {
           >
             Pro Live Preview
           </Button>
-        </Box>
+        </Box> */}
       </Box>
     </Scrollbar>
   );
